@@ -95,7 +95,6 @@ export class DataImport extends Construct {
           ? cdk.RemovalPolicy.RETAIN_ON_UPDATE_OR_DELETE
           : cdk.RemovalPolicy.DESTROY,
       autoDeleteObjects: props.config.retainOnDelete !== true,
-      transferAcceleration: true,
       enforceSSL: true,
       serverAccessLogsBucket: uploadLogsBucket,
       encryption: props.shared.kmsKey
