@@ -40,7 +40,7 @@ export class AuroraPgVector extends Construct {
       }),
       storageEncryptionKey: props.shared.kmsKey,
       // Always setting it to true would be a breaking change. (Undefined to prevent re-creating)
-      storageEncrypted: props.shared.kmsKey ? true : undefined,
+      storageEncrypted: true,
       removalPolicy:
         props.config.retainOnDelete === true
           ? cdk.RemovalPolicy.SNAPSHOT

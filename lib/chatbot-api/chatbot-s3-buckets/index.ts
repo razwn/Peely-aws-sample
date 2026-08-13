@@ -75,6 +75,7 @@ export class ChatBotS3Buckets extends Construct {
           ? cdk.RemovalPolicy.RETAIN_ON_UPDATE_OR_DELETE
           : cdk.RemovalPolicy.DESTROY,
       autoDeleteObjects: props.retainOnDelete !== true,
+      transferAcceleration: true,
       enforceSSL: true,
       serverAccessLogsBucket: logsBucket,
       encryption: props.kmsKey

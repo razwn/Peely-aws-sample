@@ -8,7 +8,7 @@ import unicodedata
 
 UPLOAD_BUCKET_NAME = os.environ.get("UPLOAD_BUCKET_NAME")
 CHATBOT_FILES_BUCKET_NAME = os.environ.get("CHATBOT_FILES_BUCKET_NAME")
-MAX_FILE_SIZE = 10 * 1000 * 1000  # 10Mb
+MAX_FILE_SIZE = 100 * 1000 * 1000  # 100Mb
 
 s3_client = boto3.client(
     "s3",

@@ -8,10 +8,10 @@ export class FileUploader {
   ): Promise<boolean> {
     return new Promise((resolve, reject) => {
       const formData = new FormData();
-      const fields = signature.fields!.replace("{", "").replace("}", "");
+      const fields = signature.fields!.replace(/^\{/, "").replace(/\}$/, "");
       fields.split(",").forEach((f) => {
         const sepIdx = f.indexOf("=");
-        const k = f.slice(0, sepIdx);
+        const k = f.slice(0, sepIdx).trim();
         const v = f.slice(sepIdx + 1);
         formData.append(k, v);
       });

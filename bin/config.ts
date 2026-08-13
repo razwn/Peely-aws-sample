@@ -100,3 +100,28 @@ export function getConfig(): SystemConfig {
 }
 
 export const config: SystemConfig = getConfig();
+
+// nvm install 20 && nvm use 20
+// export AWS_PROFILE=peely
+// aws configure set region eu-central-1
+// npx cdk synth > /dev/null
+// npm run cdk deploy
+// run cdk destroy
+
+// Model ID	Notes
+// eu.anthropic.claude-haiku-4-5-20251001-v1:0	Cheapest Claude — your workhorse
+// eu.anthropic.claude-sonnet-4-5-20250929-v1:0	Quality tier
+// eu.anthropic.claude-sonnet-4-6	
+// eu.anthropic.claude-sonnet-5	
+// eu.anthropic.claude-sonnet-4-20250514-v1:0	Older
+// eu.anthropic.claude-opus-4-5-20251101-v1:0	Expensive
+// eu.anthropic.claude-opus-4-6-v1 / -4-7 / -4-8	Expensive
+// eu.anthropic.claude-opus-5	Most expensive
+
+// Amazon Nova (via ^bedrock.*.amazon.nova*):
+
+// Model ID	Notes
+// eu.amazon.nova-micro-v1:0	Cheapest available, text-only
+// eu.amazon.nova-lite-v1:0	Cheap, multimodal
+// eu.amazon.nova-2-lite-v1:0	
+// eu.amazon.nova-pro-v1:0	Mid-tier
