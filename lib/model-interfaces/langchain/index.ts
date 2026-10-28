@@ -102,6 +102,22 @@ export class LangChainInterface extends Construct {
         })
       );
 
+      // Anthropic (and other third-party ISV) models on Bedrock are AWS
+      // Marketplace products: Bedrock checks/creates a Marketplace
+      // subscription for the calling role on every invocation, so without
+      // these actions Claude models fail with AccessDeniedException while
+      // Amazon-native models (Nova, Titan) keep working.
+      requestHandler.addToRolePolicy(
+        new iam.PolicyStatement({
+          actions: [
+            "aws-marketplace:ViewSubscriptions",
+            "aws-marketplace:Subscribe",
+            "aws-marketplace:Unsubscribe",
+          ],
+          resources: ["*"],
+        })
+      );
+
       if (props.config.bedrock?.roleArn) {
         requestHandler.addToRolePolicy(
           new iam.PolicyStatement({

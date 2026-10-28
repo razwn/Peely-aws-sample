@@ -176,6 +176,19 @@ export class FileImportBatchJob extends Construct {
         })
       );
 
+      // Third-party Marketplace models (Anthropic, Cohere, ...) need these
+      // to complete their AWS Marketplace subscription check on invocation.
+      fileImportJobRole.addToPolicy(
+        new iam.PolicyStatement({
+          actions: [
+            "aws-marketplace:ViewSubscriptions",
+            "aws-marketplace:Subscribe",
+            "aws-marketplace:Unsubscribe",
+          ],
+          resources: ["*"],
+        })
+      );
+
       if (props.config.bedrock?.roleArn) {
         fileImportJobRole.addToPolicy(
           new iam.PolicyStatement({

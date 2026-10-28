@@ -97,6 +97,19 @@ export class IdeficsInterface extends Construct {
         effect: iam.Effect.ALLOW,
       })
     );
+    // Third-party Marketplace models (Anthropic, Cohere, ...) need these
+    // to complete their AWS Marketplace subscription check on invocation.
+    requestHandler.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: [
+          "aws-marketplace:ViewSubscriptions",
+          "aws-marketplace:Subscribe",
+          "aws-marketplace:Unsubscribe",
+        ],
+        resources: ["*"],
+        effect: iam.Effect.ALLOW,
+      })
+    );
 
     const deadLetterQueue = new sqs.Queue(this, "DLQ", {
       enforceSSL: true,

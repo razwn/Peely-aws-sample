@@ -45,21 +45,17 @@ class BedrockChatAdapter(ModelAdapter):
         Returns True if the model requires choosing between temperature OR
         top_p.
 
-        Claude 4.x models (Sonnet 4, Opus 4, Haiku 4) require only one
-        sampling parameter. Handles regional prefixes (us., global., eu.).
+        Claude 4.x and later (Sonnet, Opus, Haiku) require only one sampling
+        parameter. Matched by major version number so newer releases (5.x,
+        6.x, ...) don't need this list updated again. Handles regional
+        prefixes (us., global., eu.).
         Reference: https://docs.aws.amazon.com/bedrock/latest/userguide/
         model-parameters-anthropic-claude-messages.html
         """
-        # Models that only support one sampling parameter
-        # Pattern matches any regional prefix (us., global., eu., etc.)
-        single_param_model_patterns = [
-            "anthropic.claude-sonnet-4",  # Claude Sonnet 4.x (any region)
-            "anthropic.claude-opus-4",  # Claude Opus 4.x (any region)
-            "anthropic.claude-haiku-4",  # Claude Haiku 4.x (any region)
-        ]
-
-        model_lower = self.model_id.lower()
-        return any(pattern in model_lower for pattern in single_param_model_patterns)
+        match = re.search(
+            r"anthropic\.claude-(?:sonnet|opus|haiku)-(\d+)", self.model_id.lower()
+        )
+        return bool(match) and int(match.group(1)) >= 4
 
     def add_files_to_message_history(self, images=[], documents=[], videos=[]):
         for image in images:
@@ -267,12 +263,14 @@ class BedrockChatAdapter(ModelAdapter):
 
         # Handle sampling parameters based on model requirements
         if self._requires_single_sampling_param():
-            # For Claude 4.x+ models: only set temperature OR top_p, not both
-            # Prioritize temperature if both are provided
-            if temperature is not None:
-                params["temperature"] = temperature
-            elif top_p:
-                params["top_p"] = top_p
+            # Some Claude 4.x+ models accept exactly one of temperature/top_p,
+            # but newer ones (e.g. Opus 5) reject BOTH individually with
+            # "`<param>` is deprecated for this model" - there is no single
+            # parameter that's safe to guess here. Omit both and let the
+            # model use its own default sampling rather than failing the
+            # request; this only affects models in this bucket, older models
+            # (below) keep full temperature/top_p control from the UI.
+            pass
         else:
             # For older models (Claude 3.x, etc.): allow both parameters
             if temperature is not None:

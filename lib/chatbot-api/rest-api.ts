@@ -358,6 +358,19 @@ export class ApiResolvers extends Construct {
           })
         );
 
+        // Third-party Marketplace models (Anthropic, Cohere, ...) need these
+        // to complete their AWS Marketplace subscription check on invocation.
+        apiHandler.addToRolePolicy(
+          new iam.PolicyStatement({
+            actions: [
+              "aws-marketplace:ViewSubscriptions",
+              "aws-marketplace:Subscribe",
+              "aws-marketplace:Unsubscribe",
+            ],
+            resources: ["*"],
+          })
+        );
+
         // Add permissions for Bedrock agent operations if agent is enabled
         if (props.config.bedrock?.agent?.enabled) {
           apiHandler.addToRolePolicy(

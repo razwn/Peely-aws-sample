@@ -136,7 +136,19 @@ def query_workspace_aurora(
                             metadata,
                             ts_rank_cd(to_tsvector('{language}', content), query) AS keyword_search_score
                             FROM {table},
-                            plainto_tsquery('{language}', %s) query
+                            -- plainto_tsquery ANDs every word together, so a long
+                            -- natural-language question (many words) would need a
+                            -- single chunk containing ALL of them to match anything.
+                            -- Rebuild it as an OR of the same lexemes instead, so any
+                            -- one matching term counts - ts_rank_cd still ranks chunks
+                            -- matching more terms higher.
+                            to_tsquery(
+                                '{language}',
+                                replace(
+                                    plainto_tsquery('{language}', %s)::text,
+                                    ' & ', ' | '
+                                )
+                            ) query
                             WHERE to_tsvector('{language}', content) @@ query
                             ORDER BY keyword_search_score DESC
                             LIMIT %s;"""  # noqa:E501

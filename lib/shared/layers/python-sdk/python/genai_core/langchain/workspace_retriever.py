@@ -19,7 +19,7 @@ class WorkspaceRetriever(BaseRetriever):
     ) -> List[Document]:
         logger.debug("SearchRequest", query=query)
         result = genai_core.semantic_search.semantic_search(
-            self.workspace_id, query, limit=3, full_response=False
+            self.workspace_id, query, limit=8, full_response=False
         )
 
         self.documents_found = [
